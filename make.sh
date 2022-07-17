@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # AWS variables
-AWS_PROFILE=default
-AWS_REGION=eu-west-3
+AWS_PROFILE=aws-kubernetes-github-actions
+AWS_REGION=us-east-1
 # project variables
 PROJECT_NAME=kubernetes-github-actions
 WEBSITE_PORT=3000
@@ -51,25 +51,25 @@ install-eksctl() {
 }
 
 # install yq if missing (no update)
-install-yq() {
-    if [[ -z $(which yq) ]]
-    then
-        log install yq
-        warn warn sudo is required
-        cd /usr/local/bin
-        local URL=$(wget -q -O - https://api.github.com/repos/mikefarah/yq/releases \
-            | jq --raw-output 'map( select(.prerelease==false) | .assets[].browser_download_url ) | .[]' \
-            | grep linux_amd64 \
-            | head -n 1)
-        sudo curl "$URL" \
-            --progress-bar \
-            --location \
-            --output yq
-        sudo chmod +x yq
-    else
-        log skip yq already installed
-    fi
-}
+# install-yq() {
+#     if [[ -z $(which yq) ]]
+#     then
+#         log install yq
+#         warn warn sudo is required
+#         cd /usr/local/bin
+#         local URL=$(wget -q -O - https://api.github.com/repos/mikefarah/yq/releases \
+#             | jq --raw-output 'map( select(.prerelease==false) | .assets[].browser_download_url ) | .[]' \
+#             | grep linux_amd64 \
+#             | head -n 1)
+#         sudo curl "$URL" \
+#             --progress-bar \
+#             --location \
+#             --output yq
+#         sudo chmod +x yq
+#     else
+#         log skip yq already installed
+#     fi
+# }
 
 # install kubectl if missing (no update)
 install-kubectl() {
@@ -273,8 +273,8 @@ cluster-create-config() {
 # apply kubectl EKS configuration
 cluster-apply-config() {
     # check if data.mapUsers is configured (return something if data.mapUsers is configured, otherwise return nothing)
-    local exists=$(yq read aws-auth-configmap.yaml data.mapUsers)
-    [[ -z "$exists" ]] && { error abort data.mapUsers not configured in aws-auth-configmap.yaml; return; }
+ #   local exists=$(yq read 'aws-auth-configmap.yaml' data.mapUsers)
+ #   [[ -z "$exists" ]] && { error abort data.mapUsers not configured in aws-auth-configmap.yaml; return; }
 
     log apply aws-auth-configmap.yaml
     kubectl -n kube-system apply -f aws-auth-configmap.yaml

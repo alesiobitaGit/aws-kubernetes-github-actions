@@ -9,7 +9,7 @@ on:
       - master
 
 env: 
-  AWS_REGION: eu-west-3
+  AWS_REGION: us-east-1
   ECR_REPOSITORY: kubernetes-github-actions
   SHORT_SHA: $(echo ${{ github.sha }} | cut -c 1-8)
 
